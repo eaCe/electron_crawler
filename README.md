@@ -15,3 +15,8 @@
 **build app**
 
 `yarn dist` or `npm run dist`
+
+### TODO
+
+- [ ] Add cookies
+- [ ] Add custom Javascript 
