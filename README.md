@@ -1,3 +1,5 @@
+# Crawl a website and take screenshots
+
 **install dependencies**
 
 `yarn` or `npm install`
