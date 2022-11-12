@@ -19,13 +19,13 @@ let URLIndex = 0;
 /**
  * reload electron
  */
-try {
-    require('electron-reload')(__dirname, {
-        electron: require(`${__dirname}/node_modules/electron`),
-        hardResetMethod: 'exit'
-    });
-} catch (_) {
-}
+// try {
+//     require('electron-reload')(__dirname, {
+//         electron: require(`${__dirname}/node_modules/electron`),
+//         hardResetMethod: 'exit'
+//     });
+// } catch (_) {
+// }
 
 /**
  * create main window
