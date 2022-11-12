@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-eval'">-->
+    <link href="./styles/app.css" rel="stylesheet">
+    <title>Crawl Website</title>
+</head>
+<body class="transition-opacity bg-slate-100 pb-10">
+<div class="container mx-auto" x-data="scan()">
+    <form class="pt-6 mb-1" @submit.prevent="crawlURL()">
+        <label for="url" class="text-lg text-slate-700 font-bold block mb-2">Scan URL</label>
+        <div class="mt-1 flex rounded-md shadow-sm text-slate-700 relative z-20">
+            <div class="relative flex flex-grow items-stretch">
+                <div class="pointer-events-none absolute text-slate-600 inset-y-0 left-0 flex items-center pl-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                    </svg>
+                </div>
+                <input type="text"
+                       x-ref="url"
+                       required
+                       name="url"
+                       id="url"
+                       :disabled="loading"
+                       class="block w-full rounded-none rounded-l-md border-slate-300 pl-10" placeholder="https://www.example.com">
+            </div>
+            <button type="submit"
+                    :disabled="loading"
+                    class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                <svg x-show="loading" x-cloak class="animate-spin ml-2 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg x-show="!loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Scan</span>
+            </button>
+        </div>
+
+        <div :class="error !== '' ? 'translate-y-0 opacity-1' : '-translate-y-full opacity-0'" x-cloak class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold flex bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1.5 mt-0.5" viewBox="0 0 16 16">
+                <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+            </svg>
+            <span x-text="error"></span>
+        </div>
+    </form>
+
+    <template x-if="urls.length">
+        <div class="flex flex-wrap space-y-2">
+            <template x-for="url in urls">
+                <div class="w-full p-2 rounded-md shadow-sm bg-white flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-green-600 mr-2 mt-0.5 shrink-0">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                    </svg>
+                    <span x-text="url"></span>
+                </div>
+            </template>
+        </div>
+    </template>
+
+
+    <template x-if="done">
+        <div class="w-full p-2 rounded-md shadow-sm bg-green-50 font-bold text-green-900 flex mt-5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-green-600 mr-2 mt-0.5 shrink-0">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            <span>Done</span>
+        </div>
+    </template>
+</div>
+
+<a href="#top" x-data="{show:false}"
+        @scroll.window="window.scrollY > 200 ? show = true : show = false"
+        class="block transition-all w-8 h-8 fixed bottom-3 right-3"
+        :class="show?'opacity-100 translate-x-0':'opacity-0 translate-x-full'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-8 h-8 text-slate-500" viewBox="0 0 16 16">
+        <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
+    </svg>
+</a>
+
+<script src="./renderer.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>

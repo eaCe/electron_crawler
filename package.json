@@ -1,0 +1,60 @@
+{
+  "name": "site-check",
+  "version": "0.0.1",
+  "description": "Check a site...",
+  "author": "eaCe",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "watch": "mix watch",
+    "build": "mix",
+    "build:production": "mix --production",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "de.electron.site-check",
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "portable": {
+      "useZip": true,
+      "splashImage": "splash.bmp"
+    }
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "devDependencies": {
+    "alpinejs": "^3.10.3",
+    "autoprefixer": "^10.4.12",
+    "babel-eslint": "^10.1.0",
+    "browser-sync": "^2.27.10",
+    "browser-sync-webpack-plugin": "^2.3.0",
+    "electron": "^21.1.1",
+    "electron-builder": "^23.6.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "eslint": "^8.24.0",
+    "eslint-plugin-import": "^2.26.0",
+    "laravel-mix": "^6.0.49",
+    "laravel-mix-copy-watched": "^3.0.0",
+    "postcss": "^8.4.17",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.55.0",
+    "sass-loader": "^12.1.0",
+    "tailwindcss": "^3.1.8"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "got": "11.8.5"
+  }
+}
