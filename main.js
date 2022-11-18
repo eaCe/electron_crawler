@@ -78,7 +78,7 @@ app.whenReady().then(async () => {
     browser = new BrowserWindow({
         width: browserWidth,
         height: browserHeight,
-        show: true,
+        show: false,
         // autoHideMenuBar: true,
         // show on second display
         //x: externalDisplay.bounds.x + 50,
@@ -134,8 +134,17 @@ ipcMain.on('crawl', async (event, data) => {
 /**
  * stop crawling
  */
-ipcMain.on('abort', async (event, data) => {
+ipcMain.on('abort', async (event) => {
     abort = true;
+});
+
+/**
+ * show screenshots dir
+ */
+ipcMain.on('showScreenshots', async (event) => {
+    if (screenshotPath) {
+        await shell.openPath(screenshotPath)
+    }
 });
 
 /**

@@ -65,6 +65,9 @@ window.scan = () => {
         },
         abort() {
             window.api.send('abort');
+        },
+        openScreenshots() {
+            window.api.send('showScreenshots');
         }
     };
 };
