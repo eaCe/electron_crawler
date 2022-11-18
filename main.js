@@ -16,6 +16,7 @@ let originURL;
 let urls = [];
 let URLIndex = 0;
 let dataObject = {};
+let abort = false;
 
 /**
  * reload electron
@@ -76,8 +77,8 @@ app.whenReady().then(async () => {
     browser = new BrowserWindow({
         width: browserWidth,
         height: browserHeight,
-        show: false,
-        autoHideMenuBar: true,
+        show: true,
+        // autoHideMenuBar: true,
         // show on second display
         //x: externalDisplay.bounds.x + 50,
         //y: externalDisplay.bounds.y + 50,
@@ -129,6 +130,18 @@ ipcMain.on('crawl', async (event, data) => {
     await crawlURL(dataObject.url, event);
 });
 
+/**
+ * stop crawling
+ */
+ipcMain.on('abort', async (event, data) => {
+    abort = true;
+});
+
+/**
+ * set cookies
+ * @param data
+ * @returns {Promise<void>}
+ */
 async function setCookies(data) {
     if (!data.cookies.length) {
         return;
@@ -142,6 +155,11 @@ async function setCookies(data) {
 }
 
 async function crawlURL(url, event) {
+    if (abort) {
+        await crawlAborted();
+        return;
+    }
+
     /**
      * crawl should be done
      */
@@ -293,6 +311,7 @@ async function crawlAborted(event) {
 async function reset() {
     await browser.webContents.session.clearStorageData();
     URLIndex = 0;
+    abort = false;
     urls = [];
 }
 

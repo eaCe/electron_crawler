@@ -63,6 +63,9 @@ window.scan = () => {
             this.urls = [];
             this.screenshots = [];
         },
+        abort() {
+            window.api.send('abort');
+        }
     };
 };
 
