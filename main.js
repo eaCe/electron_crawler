@@ -179,6 +179,8 @@ async function crawlURL(url, event) {
         const html = await browser.webContents.executeJavaScript(`(() => {return document.documentElement.innerHTML})()`);
         await extractURLs(url, html);
 
+        await sleep(1000);
+
         /**
          * set browserWindow size
          */
@@ -199,7 +201,7 @@ async function crawlURL(url, event) {
         const tempURL = new URL(url);
         const timestamp = +new Date();
         const filePath = screenshotPath + '/' + timestamp + '-' + originURL.hostname.toLowerCase() + tempURL.pathname.replace(/\//g, '-').toLowerCase() + '.jpg';
-        fs.writeFileSync(filePath, screenshot.toJPEG(80));
+        fs.writeFileSync(filePath, screenshot.toJPEG(100));
 
         /**
          * send urlDone event
@@ -302,3 +304,14 @@ app.on('window-all-closed', function () {
         app.quit()
     }
 })
+
+/**
+ * helper to sleep a while...
+ * @param ms
+ * @returns {Promise<unknown>}
+ */
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
