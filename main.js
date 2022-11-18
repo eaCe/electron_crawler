@@ -15,6 +15,7 @@ let screenshotPath = __dirname;
 let originURL;
 let urls = [];
 let URLIndex = 0;
+let dataObject = {};
 
 /**
  * reload electron
@@ -116,7 +117,7 @@ let extractURLs = async function (rootURL, html) {
  * start crawling
  */
 ipcMain.on('crawl', async (event, data) => {
-    const dataObject = JSON.parse(data);
+    dataObject = JSON.parse(data);
 
     if (!first) {
         await setScreenshotPath(event)
@@ -125,7 +126,7 @@ ipcMain.on('crawl', async (event, data) => {
     originURL = new URL(dataObject.url);
     urls.push(dataObject.url);
     await setCookies(dataObject);
-    await crawlURL(dataObject, event);
+    await crawlURL(dataObject.url, event);
 });
 
 async function setCookies(data) {
@@ -140,9 +141,7 @@ async function setCookies(data) {
     }
 }
 
-async function crawlURL(data, event) {
-    const url = data.url;
-
+async function crawlURL(url, event) {
     /**
      * crawl should be done
      */
@@ -156,7 +155,6 @@ async function crawlURL(data, event) {
      */
     try {
         const data = await got.get(url);
-
         if (!data.headers['content-type'].includes('text/html')) {
             await crawlNext(event);
             return;
@@ -188,17 +186,25 @@ async function crawlURL(data, event) {
         await browser.setContentSize(contentSize.width, contentSize.height);
 
         /**
+         * execute custom js
+         */
+        if (dataObject.js) {
+            await browser.webContents.executeJavaScript(`${dataObject.js}`);
+        }
+
+        /**
          * take and save screenshot
          */
         const screenshot = await browser.webContents.capturePage(contentSize);
         const tempURL = new URL(url);
         const timestamp = +new Date();
-        fs.writeFileSync(screenshotPath + '/' + timestamp + '-' + originURL.hostname.toLowerCase() + tempURL.pathname.replace(/\//g, '-').toLowerCase() + '.jpg', screenshot.toJPEG(80));
+        const filePath = screenshotPath + '/' + timestamp + '-' + originURL.hostname.toLowerCase() + tempURL.pathname.replace(/\//g, '-').toLowerCase() + '.jpg';
+        fs.writeFileSync(filePath, screenshot.toJPEG(80));
 
         /**
          * send urlDone event
          */
-        await urlDone(url, event);
+        await urlDone(url, filePath, event);
 
         /**
          * crawl next URL
@@ -251,9 +257,10 @@ async function crawlNext(event) {
     }
 }
 
-async function urlDone(url, event) {
+async function urlDone(url, filePath, event) {
     event.sender.send('urlDone', {
-        'url': url
+        'url': url,
+        'screenshot': filePath
     });
 }
 

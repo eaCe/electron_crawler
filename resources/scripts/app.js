@@ -8,8 +8,11 @@ window.scan = () => {
         done: false,
         aborted: false,
         urls: [],
+        screenshots: [],
         cookies: [],
         requestUrl: '',
+        showJs: false,
+        js: '',
         error: '',
         addCookie() {
             const cookie = {
@@ -38,10 +41,12 @@ window.scan = () => {
             this.loading = true;
             window.api.send('crawl', JSON.stringify({
                 'url': this.requestUrl,
-                'cookies': this.cookies
+                'cookies': this.cookies,
+                'js': this.js
             }));
             window.api.receive('urlDone', (data) => {
                 this.urls.push(data.url);
+                this.screenshots.push(data.screenshot);
             });
             window.api.receive('crawlDone', (data) => {
                 this.done = true;
