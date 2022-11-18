@@ -49,7 +49,7 @@ window.scan = () => {
                 this.screenshots.push(data.screenshot);
                 setTimeout(() => {
                     window.scrollTo(0, document.body.scrollHeight);
-                }, 100);
+                }, 50);
             });
             window.api.receive('crawlDone', (data) => {
                 this.done = true;
