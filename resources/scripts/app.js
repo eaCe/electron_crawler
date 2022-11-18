@@ -47,6 +47,9 @@ window.scan = () => {
             window.api.receive('urlDone', (data) => {
                 this.urls.push(data.url);
                 this.screenshots.push(data.screenshot);
+                setTimeout(() => {
+                    window.scrollTo(0, document.body.scrollHeight);
+                }, 100);
             });
             window.api.receive('crawlDone', (data) => {
                 this.done = true;

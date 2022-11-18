@@ -19,4 +19,4 @@
 ### TODO
 
 - [x] Add cookies
-- [ ] Add custom Javascript 
+- [x] Add custom Javascript 
