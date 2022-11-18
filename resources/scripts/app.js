@@ -61,6 +61,7 @@ window.scan = () => {
             this.done = false;
             this.aborted = false;
             this.urls = [];
+            this.screenshots = [];
         },
     };
 };
