@@ -1,7 +1,7 @@
 {
-  "name": "site-check",
+  "name": "electron_crawler",
   "version": "0.0.1",
-  "description": "Check a site...",
+  "description": "Crawl a Website and take Screenshots...",
   "author": "eaCe",
   "main": "main.js",
   "scripts": {

@@ -8,9 +8,9 @@
 </head>
 <body class="transition-opacity bg-slate-100 pb-10">
 <div class="container mx-auto" x-data="scan()">
-    <form class="pt-6 mb-1" @submit.prevent="crawlURL()">
+    <form class="pt-6 mb-1 flex flex-col" @submit.prevent="crawlURL()">
         <label for="url" class="text-lg text-slate-700 font-bold block mb-2">Scan URL</label>
-        <div class="mt-1 flex rounded-md shadow-sm text-slate-700 relative z-20">
+        <div class="flex rounded-md shadow-sm text-slate-700 relative z-20">
             <div class="relative flex flex-grow items-stretch">
                 <div class="pointer-events-none absolute text-slate-600 inset-y-0 left-0 flex items-center pl-3">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -18,7 +18,7 @@
                     </svg>
                 </div>
                 <input type="text"
-                       x-ref="url"
+                       x-model="requestUrl"
                        required
                        name="url"
                        id="url"
@@ -39,12 +39,57 @@
             </button>
         </div>
 
-        <div :class="error !== '' ? 'translate-y-0 opacity-1' : '-translate-y-full opacity-0'" x-cloak class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold flex bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
+        <div :class="error !== '' ? 'flex' : 'hidden'" x-cloak class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold  bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1.5 mt-0.5" viewBox="0 0 16 16">
                 <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
                 <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
             </svg>
             <span x-text="error"></span>
+        </div>
+
+        <template x-for="(cookie, index) in cookies">
+            <div class="flex space-x-3 mt-3">
+                <input type="url"
+                       required
+                       :name="'cookie_url' + index"
+                       :id="'cookie_url' + index"
+                       x-model="cookie.url"
+                       :disabled="loading"
+                       x-init="$el.focus()"
+                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="https://www.example.com">
+                <input type="text"
+                       :name="'cookie_name' + index"
+                       :id="'cookie_name' + index"
+                       x-model="cookie.name"
+                       :disabled="loading"
+                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="cookie_name">
+                <input type="text"
+                       :name="'cookie_value' + index"
+                       :id="'cookie_value' + index"
+                       x-model="cookie.value"
+                       :disabled="loading"
+                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="value">
+                <button type="button"
+                        @click="cookies.splice(index, 1)"
+                        :disabled="loading"
+                        class="relative inline-flex items-center space-x-2 rounded-md border border-red-300 bg-red-500 px-4 py-2 text-red-100 hover:bg-red-100 hover:text-red-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </template>
+
+        <div class="mt-3 flex items-center justify-end">
+            <button type="button"
+                    @click="addCookie()"
+                    :disabled="loading"
+                    class="relative inline-flex items-center space-x-2 rounded-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
+                </svg>
+                <span>Add Cookie</span>
+            </button>
         </div>
     </form>
 
@@ -68,6 +113,15 @@
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
             </svg>
             <span>Done</span>
+        </div>
+    </template>
+
+    <template x-if="aborted">
+        <div class="w-full p-2 rounded-md shadow-sm bg-red-50 font-bold text-red-900 flex mt-5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-red-600 mr-2 mt-0.5 shrink-0">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+            </svg>
+            <span>Aborted</span>
         </div>
     </template>
 </div>

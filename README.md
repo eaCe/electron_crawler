@@ -18,5 +18,5 @@
 
 ### TODO
 
-- [ ] Add cookies
+- [x] Add cookies
 - [ ] Add custom Javascript 

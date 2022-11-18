@@ -48,6 +48,11 @@ async function createWindow() {
         return {action: 'deny'};
     });
 
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+        app.quit();
+    })
+
     await mainWindow.loadFile('index.html');
 }
 
@@ -83,10 +88,6 @@ app.whenReady().then(async () => {
     });
 })
 
-app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') app.quit()
-})
-
 /**
  * extract urls form given html string
  * @param url
@@ -114,17 +115,34 @@ let extractURLs = async function (rootURL, html) {
 /**
  * start crawling
  */
-ipcMain.on('crawl', async (event, url) => {
+ipcMain.on('crawl', async (event, data) => {
+    const dataObject = JSON.parse(data);
+
     if (!first) {
-        await setScreenshotPath()
+        await setScreenshotPath(event)
     }
 
-    originURL = new URL(url);
-    urls.push(url);
-    await crawlURL(url, event);
+    originURL = new URL(dataObject.url);
+    urls.push(dataObject.url);
+    await setCookies(dataObject);
+    await crawlURL(dataObject, event);
 });
 
-async function crawlURL(url, event) {
+async function setCookies(data) {
+    if (!data.cookies.length) {
+        return;
+    }
+
+    for (const cookie of data.cookies) {
+        await browser.webContents.session.cookies.set(cookie).catch((error) => {
+            console.error(error)
+        })
+    }
+}
+
+async function crawlURL(data, event) {
+    const url = data.url;
+
     /**
      * crawl should be done
      */
@@ -174,7 +192,7 @@ async function crawlURL(url, event) {
          */
         const screenshot = await browser.webContents.capturePage(contentSize);
         const tempURL = new URL(url);
-        const timestamp = + new Date();
+        const timestamp = +new Date();
         fs.writeFileSync(screenshotPath + '/' + timestamp + '-' + originURL.hostname.toLowerCase() + tempURL.pathname.replace(/\//g, '-').toLowerCase() + '.jpg', screenshot.toJPEG(80));
 
         /**
@@ -200,10 +218,15 @@ async function crawlURL(url, event) {
  * open a dialog to select a directory
  * @returns {Promise<void>}
  */
-async function setScreenshotPath() {
+async function setScreenshotPath(event) {
     const {canceled, filePaths} = await electron.dialog.showOpenDialog(mainWindow, {
         properties: ['openDirectory']
     });
+
+    if (canceled) {
+        await crawlAborted(event);
+        return;
+    }
 
     if (filePaths) {
         screenshotPath = filePaths[0];
@@ -235,13 +258,40 @@ async function urlDone(url, event) {
 }
 
 /**
- * destroy browser window and emit event if crawl is done
+ * emit event if crawl is done
  * @param event
  * @returns {Promise<void>}
  */
 async function crawlDone(event) {
-    await browser.close();
-    URLIndex = 0;
-    urls = [];
+    await reset();
     event.sender.send('crawlDone');
 }
+
+/**
+ * emit event if crawl is aborted
+ * @param event
+ * @returns {Promise<void>}
+ */
+async function crawlAborted(event) {
+    await reset();
+    event.sender.send('crawlAborted');
+}
+
+/**
+ * reset data, clear cookies, cache etc.
+ * @returns {Promise<void>}
+ */
+async function reset() {
+    await browser.webContents.session.clearStorageData();
+    URLIndex = 0;
+    urls = [];
+}
+
+/**
+ * quit when all windows are closed
+ */
+app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+})
