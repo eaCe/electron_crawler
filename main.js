@@ -157,7 +157,7 @@ async function setCookies(data) {
 
 async function crawlURL(url, event) {
     if (abort) {
-        await crawlAborted();
+        await crawlAborted(event);
         return;
     }
 
@@ -203,7 +203,7 @@ async function crawlURL(url, event) {
         /**
          * set browserWindow size
          */
-        const contentSize = await browser.webContents.executeJavaScript(`(() => { return {x: 0, y: 0, width: document.body.offsetWidth, height: document.body.offsetHeight}})()`);
+        const contentSize = await browser.webContents.executeJavaScript(`(() => {const body = document.body;const doc = document.documentElement;return {x: 0, y: 0, width: Math.max(body.scrollWidth, body.offsetWidth, doc.clientWidth, doc.offsetWidth), height: Math.max(body.scrollHeight, body.offsetHeight, doc.clientHeight, doc.scrollHeight, doc.offsetHeight)}})()`);
         await browser.setContentSize(contentSize.width, contentSize.height);
 
         /**
