@@ -50,8 +50,9 @@ async function createWindow() {
         return {action: 'deny'};
     });
 
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', async function () {
         mainWindow = null;
+        await browser.close();
         app.quit();
     })
 
@@ -92,7 +93,7 @@ app.whenReady().then(async () => {
 
 /**
  * extract urls form given html string
- * @param url
+ * @param rootURL
  * @param html
  * @returns {Promise<void>}
  */
@@ -318,8 +319,9 @@ async function reset() {
 /**
  * quit when all windows are closed
  */
-app.on('window-all-closed', function () {
+app.on('window-all-closed', async function () {
     if (process.platform !== 'darwin') {
+        await browser.close();
         app.quit()
     }
 })
