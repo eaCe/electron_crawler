@@ -79,6 +79,7 @@ app.whenReady().then(async () => {
         width: browserWidth,
         height: browserHeight,
         show: false,
+        enableLargerThanScreen: true,
         // autoHideMenuBar: true,
         // show on second display
         //x: externalDisplay.bounds.x + 50,
@@ -207,7 +208,14 @@ async function crawlURL(url, event) {
         const html = await browser.webContents.executeJavaScript(`(() => {return document.documentElement.innerHTML})()`);
         await extractURLs(url, html);
 
-        await sleep(1000);
+        await sleep(500);
+
+        /**
+         * set max height to fix vh-unit issues...
+         */
+        await browser.webContents.executeJavaScript(`(() => { var domElements = window.document.getElementsByTagName('*');for (var i = 0; i < domElements.length; i++) {var elementHeight = window.getComputedStyle(domElements[i]).height;if (elementHeight != 'auto') {var heightNumber = Number(elementHeight.slice(0, -2));if (heightNumber > 100 && heightNumber < 1080) {domElements[i].style.setProperty('max-height', heightNumber + 'px', 'important');}}} })()`);
+
+        await sleep(500);
 
         /**
          * set browserWindow size
