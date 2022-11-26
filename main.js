@@ -231,6 +231,11 @@ async function crawlURL(url, event) {
         }
 
         /**
+         * hide scrollbar...
+         */
+        await browser.webContents.executeJavaScript(`(() => { document.querySelector('body').style.overflow = 'hidden' })()`);
+
+        /**
          * take and save screenshot
          */
         const screenshot = await browser.webContents.capturePage(contentSize);
