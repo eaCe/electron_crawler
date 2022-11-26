@@ -6,12 +6,12 @@
     <link href="./styles/app.css" rel="stylesheet">
     <title>Crawl Website</title>
 </head>
-<body class="transition-opacity bg-slate-100 pb-10">
+<body class="transition-opacity bg-primary-100 pb-10">
 <div class="container mx-auto pb-10" x-data="scan()">
     <form class="pt-6 mb-1 flex flex-col" @submit.prevent="crawlURL()">
         <div class="flex items-center justify-between mb-2">
-            <label for="url" class="text-lg text-slate-700 font-bold block">Crawl URL</label>
-            <button type="button" class="text-slate-500" @click.prevent="showSettings=!showSettings">
+            <label for="url" class="text-lg text-primary-700 font-bold block">Crawl URL</label>
+            <button type="button" class="text-primary-500" @click.prevent="showSettings=!showSettings">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 018.82 1h2.36a1 1 0 01.98.804l.331 1.652a6.993 6.993 0 011.929 1.115l1.598-.54a1 1 0 011.186.447l1.18 2.044a1 1 0 01-.205 1.251l-1.267 1.113a7.047 7.047 0 010 2.228l1.267 1.113a1 1 0 01.206 1.25l-1.18 2.045a1 1 0 01-1.187.447l-1.598-.54a6.993 6.993 0 01-1.929 1.115l-.33 1.652a1 1 0 01-.98.804H8.82a1 1 0 01-.98-.804l-.331-1.652a6.993 6.993 0 01-1.929-1.115l-1.598.54a1 1 0 01-1.186-.447l-1.18-2.044a1 1 0 01.205-1.251l1.267-1.114a7.05 7.05 0 010-2.227L1.821 7.773a1 1 0 01-.206-1.25l1.18-2.045a1 1 0 011.187-.447l1.598.54A6.993 6.993 0 017.51 3.456l.33-1.652zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
                 </svg>
@@ -20,18 +20,18 @@
         <div class="flex gap-2 mb-3 justify-end" x-show="showSettings">
             <button type="button"
                     @click.prevent="exportProfile()"
-                    class="relative inline-flex items-center space-x-2 rounded-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                    class="relative inline-flex items-center space-x-2 rounded-md border border-primary-300 bg-primary-800 px-4 py-2 text-sm font-medium text-primary-100 hover:bg-primary-100 hover:text-primary-700 transition-colors">
                 Export Profile
             </button>
             <button type="button"
                     @click.prevent="importProfileHandler()"
-                    class="relative inline-flex items-center space-x-2 rounded-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                    class="relative inline-flex items-center space-x-2 rounded-md border border-primary-300 bg-primary-800 px-4 py-2 text-sm font-medium text-primary-100 hover:bg-primary-100 hover:text-primary-700 transition-colors">
                 Import Profile
             </button>
         </div>
-        <div class="flex rounded-md shadow-sm text-slate-700 relative z-20">
+        <div class="flex rounded-md shadow-sm text-primary-700 relative z-20">
             <div class="relative flex flex-grow items-stretch">
-                <div class="pointer-events-none absolute text-slate-600 inset-y-0 left-0 flex items-center pl-3">
+                <div class="pointer-events-none absolute text-primary-600 inset-y-0 left-0 flex items-center pl-3">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                     </svg>
@@ -42,11 +42,11 @@
                        name="url"
                        id="url"
                        :disabled="loading"
-                       class="block w-full rounded-none rounded-l-md border-slate-300 pl-10" placeholder="https://www.example.com">
+                       class="block w-full rounded-none rounded-l-md border-primary-300 pl-10" placeholder="https://www.example.com">
             </div>
             <button type="submit"
                     :disabled="loading"
-                    class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                    class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-primary-300 bg-primary-800 px-4 py-2 text-sm font-medium text-primary-100 hover:bg-primary-100 hover:text-primary-700 transition-colors">
                 <svg x-show="loading" x-cloak class="animate-spin ml-2 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -75,19 +75,19 @@
                        x-model="cookie.url"
                        :disabled="loading"
                        x-init="$el.focus()"
-                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="https://www.example.com">
+                       class="block w-full shadow-sm rounded-md border-primary-300 px-3 py-2" placeholder="https://www.example.com">
                 <input type="text"
                        :name="'cookie_name' + index"
                        :id="'cookie_name' + index"
                        x-model="cookie.name"
                        :disabled="loading"
-                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="cookie_name">
+                       class="block w-full shadow-sm rounded-md border-primary-300 px-3 py-2" placeholder="cookie_name">
                 <input type="text"
                        :name="'cookie_value' + index"
                        :id="'cookie_value' + index"
                        x-model="cookie.value"
                        :disabled="loading"
-                       class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2" placeholder="value">
+                       class="block w-full shadow-sm rounded-md border-primary-300 px-3 py-2" placeholder="value">
                 <button type="button"
                         @click="cookies.splice(index, 1)"
                         :disabled="loading"
@@ -101,7 +101,7 @@
 
         <template x-if="showJs">
             <div class="flex space-x-3 mt-3 items-start">
-                <textarea class="block w-full shadow-sm rounded-md border-slate-300 px-3 py-2"
+                <textarea class="block w-full shadow-sm rounded-md border-primary-300 px-3 py-2"
                           placeholder="(() => { alert('test') })()"
                           x-model="js"></textarea>
                 <button type="button"
@@ -120,7 +120,7 @@
                     x-show="!showJs"
                     @click="showJs=true"
                     :disabled="loading"
-                    class="relative inline-flex items-center space-x-2 rounded-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                    class="relative inline-flex items-center space-x-2 rounded-md border border-primary-300 bg-primary-800 px-4 py-2 text-sm font-medium text-primary-100 hover:bg-primary-100 hover:text-primary-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
                 </svg>
@@ -129,7 +129,7 @@
             <button type="button"
                     @click="addCookie()"
                     :disabled="loading"
-                    class="relative inline-flex items-center space-x-2 rounded-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                    class="relative inline-flex items-center space-x-2 rounded-md border border-primary-300 bg-primary-800 px-4 py-2 text-sm font-medium text-primary-100 hover:bg-primary-100 hover:text-primary-700 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
                 </svg>
@@ -156,7 +156,7 @@
 
             <div class="w-full">
                 <button @click.prevent="openScreenshots()"
-                        class="flex items-center transition-all rounded-md mt-3 py-2 px-3 bg-slate-500 font-medium text-white hover:bg-slate-800 transition-colors">
+                        class="flex items-center transition-all rounded-md mt-3 py-2 px-3 bg-primary-800 font-medium text-white hover:bg-primary-800 transition-colors">
                     Open Screenshots folder
                 </button>
             </div>
@@ -183,7 +183,7 @@
 
     <button @click="abort()"
             class="flex items-center transition-all fixed bottom-3 left-3 uppercase rounded-md py-2 px-3 bg-red-500 font-medium text-white hover:bg-red-800 transition-colors"
-            :class="loading?'opacity-100 translate-x-0':'opacity-0 translate-x-full'">
+            :class="loading?'opacity-100 tranprimary-x-0':'opacity-0 tranprimary-x-full'">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2">
             <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" />
         </svg>
@@ -194,8 +194,8 @@
 <a href="#top" x-data="{show:false}"
         @scroll.window="window.scrollY > 200 ? show = true : show = false"
         class="block transition-all w-8 h-8 fixed bottom-3 right-3"
-        :class="show?'opacity-100 translate-x-0':'opacity-0 translate-x-full'">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-8 h-8 text-slate-500" viewBox="0 0 16 16">
+        :class="show?'opacity-100 tranprimary-x-0':'opacity-0 tranprimary-x-full'">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-8 h-8 text-primary-500" viewBox="0 0 16 16">
         <path d="M2 16a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2zm6.5-4.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 1 0z"/>
     </svg>
 </a>
