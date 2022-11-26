@@ -339,6 +339,50 @@ async function reset() {
 }
 
 /**
+ * export profile.json
+ */
+ipcMain.on('export', async (event, data) => {
+    const dataObject = JSON.parse(data);
+
+    const {canceled, filePaths} = await electron.dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory']
+    });
+
+    if (canceled) {
+        return;
+    }
+
+    if (filePaths) {
+        const url = new URL(dataObject.url);
+        const filePath = filePaths[0] + '/' + url.hostname.toLowerCase() + '-profile.json';
+        fs.writeFileSync(filePath, data);
+        await shell.openPath(filePaths[0]);
+    }
+});
+
+/**
+ * import profile.json
+ */
+ipcMain.on('import', async (event, data) => {
+    const {canceled, filePaths} = await electron.dialog.showOpenDialog(mainWindow, {
+        properties: ['openFile'],
+        filters: [{name: 'Profile', extensions: ['json']}]
+    });
+
+    if (canceled) {
+        return;
+    }
+
+    if (filePaths) {
+        const contents = fs.readFileSync(filePaths[0], {encoding: 'utf8', flag: 'r'});
+
+        if (contents) {
+            event.sender.send('import', contents);
+        }
+    }
+});
+
+/**
  * quit when all windows are closed
  */
 app.on('window-all-closed', async function () {

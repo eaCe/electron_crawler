@@ -7,6 +7,7 @@ window.scan = () => {
         loading: false,
         done: false,
         aborted: false,
+        showSettings: false,
         urls: [],
         screenshots: [],
         cookies: [],
@@ -14,6 +15,11 @@ window.scan = () => {
         showJs: false,
         js: '',
         error: '',
+        init() {
+            window.api.receive('import', (data) => {
+                this.importProfile(data);
+            });
+        },
         addCookie() {
             const cookie = {
                 url: '',
@@ -71,6 +77,34 @@ window.scan = () => {
         },
         openScreenshots() {
             window.api.send('showScreenshots');
+        },
+        exportProfile() {
+            window.api.send('export', JSON.stringify({
+                'url': this.requestUrl,
+                'cookies': this.cookies,
+                'js': this.js
+            }));
+        },
+        importProfile(data) {
+            const dataObject = JSON.parse(data);
+
+            if (dataObject.hasOwnProperty('url')) {
+                this.requestUrl = dataObject.url;
+            }
+
+            if (dataObject.hasOwnProperty('cookies')) {
+                this.cookies = dataObject.cookies;
+            }
+
+            if (dataObject.hasOwnProperty('js')) {
+                this.js = dataObject.js;
+                this.showJs = true;
+            }
+
+            this.showSettings = false;
+        },
+        importProfileHandler() {
+            window.api.send('import');
         }
     };
 };
